@@ -1,0 +1,50 @@
+{
+  "name": "prefix-selector",
+  "version": "1.0.7",
+  "description": "批量给css文件加前缀选择器",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "prefix-selector": "./bin/cli.js"
+  },
+  "scripts": {
+    "dev": "tsc -w",
+    "build": "tsc",
+    "cli": "node ./dist/cli.js",
+    "reset": "cp -rf ./test/ \"./test copy\"",
+    "pub": "npm publish  --access=public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smooth-cat/prefix-selector.git"
+  },
+  "keywords": [
+    "prefix-selector",
+    "css-prefix",
+    "prefix",
+    "css",
+    "scope",
+    "selector",
+    "postcss"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/smooth-cat/prefix-selector/issues"
+  },
+  "homepage": "https://github.com/smooth-cat/prefix-selector#readme",
+  "dependencies": {
+    "@types/fs-extra": "^11.0.1",
+    "@types/glob": "^7.2.0",
+    "@types/node": "^18.15.5",
+    "@types/postcss-prefix-selector": "^1.15.0",
+    "commander": "^8.3.0",
+    "glob": "^7.2.3",
+    "postcss": "^8.4.21",
+    "postcss-prefix-selector": "^1.16.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.5"
+  }
+}
