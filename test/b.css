@@ -1,3 +1,11 @@
 a[aaa] div[bbb] {
   justify-content: center;
 }
+
+a::after {
+  color: red;
+}
+
+::before {
+  width: 10px;
+}
