@@ -6,11 +6,11 @@ export type PrefixOption = {
   // TODO:
   includeFiles?: RegExp;
   transform?: ((prefix: string, selector: string, prefixedSelector: string) => string|undefined);
-  body?: boolean
+  body?: boolean;
+  isOld?: boolean;
 };
 
 const DefaultOpt: PrefixOption = {
-  prefix: '[xxx]',
   body: false,
 }
 
@@ -28,8 +28,11 @@ export type IGroupItem = {
 
 let ctx = { ...DefaultOpt } as ICtx;
 const resetCtx = () => ctx = { ...DefaultOpt } as ICtx;
-
 export const createPlugin = (opt: PrefixOption) => {
+  return  opt.isOld ? createOldPlugin(opt) : createNewPlugin(opt);
+}
+
+export const createNewPlugin = (opt: PrefixOption) => {
   const fn = (root) => {
     ctx = { ...ctx, ...DefaultOpt, ...opt };
 
@@ -45,8 +48,7 @@ export const createPlugin = (opt: PrefixOption) => {
 // postcss 会对改变后的 ast 重新触发 Rule
 const walked = new WeakSet();
 function Rule(node) {
-  if(walked.has(node)) return;
-  walked.add(node);
+  if(nodeFallback(node)) return;
   const { selector } = node;
   ctx.selector = selector;
   // 分割
@@ -155,6 +157,44 @@ const handleEveryFirst = (selector: string) => {
   return res;
 }
 
+/** 不处理的节点 */
+const nodeFallback = (node: any) => {
+  // 遍历过的节点不再处理
+  if(walked.has(node)) return true;
+  walked.add(node);
+
+  // 父级是 keyframe 的不做处理
+  const keyframeRules = [
+    'keyframes',
+    '-webkit-keyframes',
+    '-moz-keyframes',
+    '-o-keyframes',
+  ];
+
+  if (node?.parent && keyframeRules.includes(node?.parent?.name)) {
+    return true;
+  }
+  return false;
+}
+
+export const createOldPlugin = (opt: PrefixOption) => {
+  return function (root) {
+    ctx = { ...ctx, ...DefaultOpt, ...opt };
+
+    root.walkRules((node) => {
+      if(nodeFallback(node)) return;
+      
+      const selectors = [...node.selectors]
+
+      node.selectors = selectors.map((selector: string) => {
+        const res = handleEveryFirst(selector);
+        return res;
+      });
+    });
+
+    resetCtx();
+  };
+};
 
 
 // Rule({selector: 'aaa'});

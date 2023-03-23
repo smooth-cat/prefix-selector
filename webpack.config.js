@@ -2,7 +2,6 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    cli: './src/cli.ts',
     index: './src/index.ts'
   },
   module: {

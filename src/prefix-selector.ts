@@ -27,13 +27,19 @@ export const prefixSelectorSingle = (css: string, opt: PrefixOption = {}) => {
  * @param opt 前缀选项
  */
 export const prefixSelector = (patten: string, opt: PrefixOption = {}) => {
-  return loopFiles(patten, (data) => {
+  return loopFiles(patten, (data, p) => {
     const res = prefixSelectorSingle(data, opt);
+    console.log(`${p} ✅`);
     return res;
   })
 }
 
 // prefixSelector('./test copy/**', {
 //   prefix: '[ok]'
+// })
+
+// prefixSelector('./test copy/**', {
+//   prefix: '[ok]',
+//   isOld: true,
 // })
 
