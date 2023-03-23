@@ -1,3 +1,5 @@
 #!/usr/bin/env node
 
-require('../dist/cli');
+const { execCli } = require('../dist/index.js');
+// 执行 cli
+execCli();

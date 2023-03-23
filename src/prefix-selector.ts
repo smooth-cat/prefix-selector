@@ -1,15 +1,6 @@
-import prefixer from 'postcss-prefix-selector';
+import { createPlugin, PrefixOption } from './plugin';
 import postcss from 'postcss';
 import { loopFiles } from './utils';
-
-export type PrefixOption = {
-  prefix?: string | undefined;
-  exclude?: ReadonlyArray<string | RegExp> | undefined;
-  ignoreFiles?: ReadonlyArray<string | RegExp> | undefined;
-  includeFiles?: ReadonlyArray<string | RegExp> | undefined;
-  transform?: ((prefix: Readonly<string>, selector: Readonly<string>, prefixedSelector: Readonly<string>, file: Readonly<string>) => string) | undefined;
-  body?: boolean
-};
 
 const createTransform = (body: boolean) => {
   return  ((prefix, selector, prefixedSelector) => {
@@ -25,8 +16,8 @@ const createTransform = (body: boolean) => {
  * 调用 postCss 和 postcss-prefix-selector 处理 css 字符串
  */
 export const prefixSelectorSingle = (css: string, opt: PrefixOption = {}) => {
-  const plugin = prefixer({ transform: createTransform(opt.body), ...opt }) as any;
-  const out = postcss().use(plugin).process(css).css;
+  const plugin = createPlugin(opt) as any;
+  const out = postcss([plugin]).process(css).css;
   return out;
 };
 
@@ -38,15 +29,11 @@ export const prefixSelectorSingle = (css: string, opt: PrefixOption = {}) => {
 export const prefixSelector = (patten: string, opt: PrefixOption = {}) => {
   return loopFiles(patten, (data) => {
     const res = prefixSelectorSingle(data, opt);
-    // console.log(res);
     return res;
   })
 }
 
-// 导出 prefixer 插件
-export { prefixer };
-
 // prefixSelector('./test copy/**', {
-//   prefix: 'lalal'
+//   prefix: '[ok]'
 // })
 
