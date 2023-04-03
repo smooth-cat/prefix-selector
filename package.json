@@ -1,6 +1,6 @@
 {
   "name": "prefix-selector",
-  "version": "1.0.13",
+  "version": "2.0.0",
   "description": "批量给css文件加前缀选择器",
   "module": "dist/index.js",
   "main": "dist/index.js",

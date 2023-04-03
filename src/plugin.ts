@@ -8,6 +8,7 @@ export type PrefixOption = {
   transform?: ((prefix: string, selector: string, prefixedSelector: string) => string|undefined);
   body?: boolean;
   isOld?: boolean;
+  idClassOnly?: boolean;
 };
 
 const DefaultOpt: PrefixOption = {
@@ -134,13 +135,20 @@ const handleEveryFirst = (selector: string) => {
     // ignoreFiles,
     // includeFiles,
     transform,
-    body
+    body,
+    idClassOnly,
   } = ctx;
-  // 忽略的
-  if(exclude && selector.match(exclude)) return selector;
 
+  // 正则排除
+  const shouldExclude = exclude && selector.match(exclude);
   // 默认忽略 body
-  if(selector === 'body' && !body) return selector;
+  const ignoreBody =  !body && selector === 'body';
+  // 选择器中 包含 id\class 才
+  const notIdClass = idClassOnly && !selector.match(/[\.#]/);
+
+  if (shouldExclude || ignoreBody || notIdClass) {
+    return selector;
+  }
 
   const prefixSelector = `${prefix} ${selector}`;
 

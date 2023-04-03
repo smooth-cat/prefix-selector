@@ -11,7 +11,7 @@
   # 查看使用方法
   prefix-selector -h
 
-  prefix-selector [options] <string>
+  prefix-selector <string> [options] 
 
     Arguments:
       string                   glob 定义的文件夹路径 https://www.npmjs.com/package/glob
@@ -21,6 +21,7 @@
       -p, --prefix <prefix>    需添加的 css 前缀选择器
       -e, --exclude <exclude>  无需处理的选择器
       -b, --body               是否修改 body 为 `body${prefix}`
+      -o, --id-class-only      只对 包含 id 或 class 选择器 的做替换
       -h, --help               display help for command
 ```
 
@@ -35,10 +36,28 @@
     prefix?: string | undefined;
     // 无需处理的选择器
     exclude?: ReadonlyArray<string | RegExp> | undefined;
+    // 只对 包含 id 或 class 选择器 的做替换
+    idClassOnly: boolean;
     // 自定义处理函数
     transform?: ((prefix: Readonly<string>, selector: Readonly<string>, prefixedSelector: Readonly<string>, file: Readonly<string>) => string) | undefined;
   })
 ```
+
+## postcss 插件调用
+我们参考 [postcss-prefix-selector](https://www.npmjs.com/package/postcss-prefix-selector) 实现了 `createPlugin`，其入参与 js 调用的 方式的 **第二个参数相同**
+```js
+const { createPlugin } = require('prefix-selector');
+createPlugin(
+  // 与 js 调用的第二个参数相同
+  ...options,
+  // 对于低版本的 post-css 需要开启该选项
+  isOld: boolean,
+)
+```
+
+## 运行时使用
+考虑到存在 styled-components 等运行时 css 方案，我们这里提供了一个专用于运行时的插件
+
 
 ## 执行前后 css 比较
 
@@ -104,8 +123,3 @@
   })
 ```
 
-## postcss 插件调用
-我们这里将 [postcss-prefix-selector](https://www.npmjs.com/package/postcss-prefix-selector) 做了导出，对应的插件引入方式
-```js
-const { prefixer } = require('prefix-selector');
-```
